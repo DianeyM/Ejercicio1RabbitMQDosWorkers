@@ -1,0 +1,74 @@
+services:
+  # Servicio de RabbitMQ
+  rabbitmq-service:                          #Docker registra este nombre (rabbitMQ) como un DNS interno, así que desde otro contenedor puedes conectarte através de el.
+    image: rabbitmq:3.12.12-management       # Imagen oficial de RabbitMQ con la interfaz de administración incluida
+    container_name: rabbitmq9                # Nombre del contenedor (opcional, para facilitar la referencia). 
+    ports:
+      - "5672:5672"                          # Puerto para la comunicación AMQP (usado por Pika/Python); AMQP (para apps externas como Python)
+      - "15672:15672"                        # Puerto para la interfaz web de administración de RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}  # Usuario por defecto definido en el archivo .env
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS}  # Contraseña por defecto definida en el archivo .env
+    networks:
+      - rabbitMQ-net                         # Conectado a la red virtual compartida
+    restart: always 
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Servicio con flask que recibe solicitudes y envía o publica mensajes (send.py)
+  sender:
+    build: ./api                         # Construye el contenedor a partir del Dockerfile ubicado en la carpeta "api"
+    container_name: rabbit_api_sender9
+    ports:
+      - 5044:5000                        
+    depends_on:
+      rabbitmq-service:
+        condition: service_healthy       # Espera a que RabbitMQ esté sano                 
+    environment:                         # Variables de entorno que pueden ser usadas por send.py
+      RABBIT_HOST: ${RABBIT_HOST}
+      RABBIT_PORT: ${RABBIT_PORT}
+      RABBIT_USER: ${RABBIT_USER}
+      RABBIT_PASS: ${RABBIT_PASS}
+    networks:
+      - rabbitMQ-net                      # Conectado a la misma red para comunicarse con RabbitMQ
+    restart: always 
+
+  # Primer consumidor: Servicio que recibe mensajes (receive.py) 
+  worker1:
+    build: ./consumer                    # Construye el contenedor a partir del Dockerfile ubicado en la carpeta "consumer"
+    container_name: rabbit_worker1
+    depends_on:
+      rabbitmq-service:              
+        condition: service_healthy       # Espera a que RabbitMQ esté sano 
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}
+      RABBIT_PORT: ${RABBIT_PORT}
+      RABBIT_USER: ${RABBIT_USER}
+      RABBIT_PASS: ${RABBIT_PASS}
+    networks:
+      - rabbitMQ-net                      # Red compartida para comunicación interna
+    restart: always 
+
+    # Segundo consumidor: Servicio que recibe mensajes (receive.py) 
+  worker2:
+    build: ./consumer                    # Construye el contenedor a partir del Dockerfile ubicado en la carpeta "consumer"
+    container_name: rabbit_worker2
+    depends_on:
+      rabbitmq-service:              
+        condition: service_healthy       # Espera a que RabbitMQ esté sano 
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}
+      RABBIT_PORT: ${RABBIT_PORT}
+      RABBIT_USER: ${RABBIT_USER}
+      RABBIT_PASS: ${RABBIT_PASS}
+    networks:
+      - rabbitMQ-net                      # Red compartida para comunicación interna
+    restart: always 
+
+# Red compartida entre servicios para que puedan comunicarse por nombre de contenedor (DNS interno de Docker)
+networks:
+  rabbitMQ-net:
