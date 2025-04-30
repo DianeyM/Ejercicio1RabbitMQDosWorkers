@@ -1,7 +1,7 @@
 
 # Sistema Distribuido con RabbitMQ, Flask y Docker
 
-Este proyecto demuestra el uso de RabbitMQ como sistema de mensajería en una arquitectura distribuida con múltiples servicios Dockerizados. Basicamente consiste en una arquitectura de microservicios que utiliza **RabbitMQ** como un sistema de mensajería para desacoplar los diferentes componentes del sistema. Los servicios están dockerizados y se comunican entre sí a través de colas de mensajes gestionadas por RabbitMQ. 
+Este proyecto demuestra el uso de RabbitMQ como sistema de mensajería en una arquitectura distribuida con múltiples servicios Dockerizados. Básicamente consiste en una arquitectura de microservicios que utiliza **RabbitMQ** como un sistema de mensajería para desacoplar los diferentes componentes del sistema. Los servicios están dockerizados y se comunican entre sí a través de colas de mensajes gestionadas por RabbitMQ. 
 
 El sistema está compuesto por tres servicios:
 
@@ -43,7 +43,7 @@ El sistema está compuesto por tres servicios:
 
 ```bash
 git clone https://github.com/DianeyM/Ejercicio1RabbitMQDosWorkers.git
-cd RabitMQ10-Python
+ cd <nombre_del_directorio_clonado>  --> cd RabitMQ10-Python
 docker-compose up --build
 ```
 
@@ -167,7 +167,7 @@ docker logs -f rabbit_worker2
 -----------------------------------------------------------------------
 ### 5.3 ANTE LA CAÍDA DE UN WORKER, EL OTRO TOMA SU TRABAJO, EVITANDO QUE LOS TRABAJOS SE PIERDAN (auto_ack=False y back_ack - Confirmación manual de la finalización del trabajo mediante ack))
 
-Simular la caída de un worker que tenía un trabajo en desarrollo antes de que termine el trabajo o antes de que envíe el ack respectivo que indica que terminó de procesar el trabajo, para ver cómo el otro worker toma el trabajo que no pudo completar el primero. De tal manera, que no se pierda el trabajo con la caida de un worker. 
+Simular la caída de un worker que tenía un trabajo en desarrollo antes de que termine el trabajo o antes de que envíe el ack respectivo que indica que terminó de procesar el trabajo, para ver cómo el otro worker toma el trabajo que no pudo completar el primero. De tal manera, que no se pierda el trabajo con la caída de un worker. 
 
 En la primera consola:
 #### 5.3.1 Enviar trabajos simulados:
@@ -362,4 +362,60 @@ http://IP_MÁQUINA_VIRTUAL:15672
 
 ---
 
+##  6. Flujo del Sistema y Mecanismos de Fiabilidad y Distribución del Trabajo
+
+El sistema distribuido desarrollado sigue un enfoque de arquitectura basada en colas, con el objetivo de desacoplar el envío y procesamiento de mensajes, facilitar la *escalabilidad horizontal*, y garantizar tolerancia a fallos. A continuación se describe el flujo real del sistema y los mecanismos implementados que respaldan su comportamiento confiable y distribuido.
+
+### 6.1 Flujo General del Sistema
+
+1. **Publicación del mensaje:**  
+   El servicio `sender` recibe solicitudes HTTP con el contenido del mensaje y lo publica en una cola de RabbitMQ. Esto se realiza mediante la biblioteca `pika`.
+
+2. **Persistencia del mensaje:**  
+   Los mensajes se publican con `delivery_mode=pika.DeliveryMode.Persistent`, lo que garantiza que, incluso si el broker se reinicia o falla, los mensajes no se pierden, siempre que la cola esté configurada como `durable=True`, y, en efecto la cola está configurada como `durable=True`.
+
+3. **Distribución del mensaje:**  
+   RabbitMQ encola el mensaje y lo pone a disposición de cualquier consumidor conectado. En caso de que haya varios, distribuye los mensajes equitativamente en modo **round-robin**, respetando la disponibilidad de cada consumidor.
+
+4. **Procesamiento controlado por los workers:**  
+   Los servicios `worker1` y `worker2` se conectan a la cola con:
+   - `auto_ack=False`: el mensaje no se considera procesado hasta que el consumidor lo confirme manualmente.
+   - `prefetch_count=1`: el broker no enviará un nuevo mensaje a un worker hasta que este haya procesado y confirmado el anterior, evitando sobrecarga y asegurando que un solo worker procese una tarea a la vez.
+   - Al finalizar exitosamente el procesamiento, el worker envía `channel.basic_ack(delivery_tag=method.delivery_tag)` para notificar al broker.
+
+5. **Procesamiento de Mensajes (Workers):**
+Cada instancia de worker (por ejemplo, worker1 y worker2) se conecta a RabbitMQ y comienza a consumir mensajes de la cola. El procesamiento es realizado de forma **asíncrona**: una vez recibido un mensaje, el worker ejecuta su lógica (en este caso, impresión/log del contenido recibido), y luego envía un ack al broker para confirmar la finalización correcta.
+
+### 6.2 Mecanismos de Fiabilidad
+
+El sistema incorpora múltiples garantías de fiabilidad a nivel de broker, productor y consumidor:
+
+- **Durabilidad de colas y mensajes:**  
+  - Las colas se declaran como `durable=True`.
+  - Los mensajes se publican con `delivery_mode=pika.DeliveryMode.Persistent`.
+  Esto permite que los mensajes sobrevivan a caídas o reinicios del broker.
+
+- **Confirmación manual (`basic_ack`):**  
+  - Al usar `auto_ack=False`, los consumidores deben confirmar explícitamente que han procesado cada mensaje.
+  - Si un worker falla antes de enviar `basic_ack()`, RabbitMQ detecta la desconexión y reencola automáticamente el mensaje para que otro worker lo procese.
+
+- **Control de flujo (`prefetch_count=1`):**  
+  - Evita que un consumidor reciba múltiples mensajes antes de procesar el actual, lo cual es crucial para mantener la estabilidad del sistema bajo carga y evitar pérdidas por bloqueos.
+
+- **Reconexión resiliente:**  
+  - Tanto el servicio `sender` como los workers utilizan mecanismos de reconexión automática basados en `retry`, lo cual asegura que reanuden su funcionamiento normal una vez que RabbitMQ esté disponible nuevamente, sin intervención manual.
+
+### 6.3 Mecanismos de Distribución del Trabajo
+
+Las pruebas prácticas confirmaron que:
+
+- Los mensajes se distribuyen equitativamente entre múltiples consumidores activos.
+- Al usar `prefetch_count=1`, se logró un procesamiento secuencial por consumidor, permitiendo controlar el rendimiento individual.
+- En pruebas como `send_ten_messages.sh`, se observó una distribución balanceada entre `worker1` y `worker2`.
+- Si un worker se detiene o falla, el otro continúa procesando sin interrupciones.
+- Al agregar nuevos workers, el sistema redistribuye automáticamente la carga, habilitando un **escalado horizontal transparente**.
+
+## 7. Conclusión
+
+Este sistema demuestra un diseño robusto y confiable, con componentes desacoplados que cooperan mediante RabbitMQ para lograr tolerancia a fallos, persistencia de mensajes y procesamiento distribuido. Las configuraciones clave —como `auto_ack=False`, `basic_ack`, `prefetch_count=1`, `durable=True` y `delivery_mode=Persistent`— garantizan integridad y resiliencia. La arquitectura facilita el escalado.
 
