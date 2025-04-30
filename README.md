@@ -329,13 +329,16 @@ docker exec -it rabbitmq9 rabbitmqctl list_users
 chmod +x create_external_user.sh
 bash create_external_user.sh
 ```
-⚠️ Tenga en cuenta que solo puede seguir el paso 5.7.1 o 5.7.2, no los dos, porque al ejecutar el script  create_external_user.sh se indicará que el usuario ya existe.
+
+---
+
+>⚠️ Tenga en cuenta que solo puede seguir el paso 5.7.1 o 5.7.2, no los dos, porque al ejecutar el script  create_external_user.sh se indicará que el usuario ya existe.
 En dado caso, si siguió los pasos de numeral 5.7.1 y quiere probar el scrip del numeral 5.7.2, deberá eliminar el usuario creado: 
 
 ```bash
 docker exec -it rabbitmq9 rabbitmqctl delete_user <nombre_usuario>  --> docker exec -it rabbitmq9 rabbitmqctl delete_user dianey
 ```
-
+---
 ##### 5.7.2.1 Acceder desde navegador al dashboard de RabbitMQ:
 
 Puedes acceder desde el navegador de la máquina física con el usuario `dianey` y la contraseña `dianey94*`:
