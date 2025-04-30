@@ -62,10 +62,10 @@ docker ps
 ## 5. Probar: 
 Por comodidad y para ver en tiempo real, puedes abrir tres terminales; uno para ejecutar los mensajes, otra para ver los registro de un worker y otro para ver los registros del otro worker. Deja estas tres terminales activas durante las pruebas para que vayan viendo el flujo enviado por el publicador y el flujo recibido por los workers:
 
-# 5.1 DISTRIBUCIÓN UNIFORME DE TAREAS:
+### 5.1 DISTRIBUCIÓN UNIFORME DE TAREAS:
 
 *En la primera consola:
-### 5.1.1 Enviar trabajos simulados:
+#### 5.1.1 Enviar trabajos simulados:
 ```
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!1."}'
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!2.."}'
