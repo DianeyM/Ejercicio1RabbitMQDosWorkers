@@ -9,68 +9,13 @@ El sistema está compuesto por tres servicios:
 2. **sender**: Una API basada en Flask que recibe solicitudes HTTP y publica mensajes en una cola de RabbitMQ.
 3. **worker1 y worker2**: Un consumidor que recibe y procesa mensajes desde la cola.
 
-##  1. Estructura del Proyecto
-
-```plaintext
-.
-├── api/                          # Carpeta que contiene el código y configuración de la API
-│   ├── api.py                    # Archivo Python que implementa la API Flask para enviar mensajes a RabbitMQ
-│   ├── Dockerfile                # Dockerfile para construir el contenedor de la API
-│   ├── requirements.txt          # Archivo con las dependencias de Python para la API (como Flask y Pika)
-├── consumer/                     # Carpeta que contiene el código y configuración de los consumidores (workers)
-│   ├── receiver.py               # Archivo Python que implementa la lógica de los consumidores que procesan mensajes
-│   ├── Dockerfile                # Dockerfile para construir el contenedor de los consumidores
-│   ├── requirements.txt          # Archivo con las dependencias necesarias para los consumidores (como Pika)
-├── docker-compose.yml            # Archivo de configuración de Docker Compose que define los servicios (RabbitMQ, API, Consumers)
-├── send_five_uniform_messages.sh # Script para enviar cinco mensajes uniformes a RabbitMQ
-├── send_ten_messages.sh          # Script para enviar diez mensajes a RabbitMQ
-├── send_two_messages.sh          # Script para enviar dos mensajes a RabbitMQ
-├── send_two_messages2.sh         # Script para enviar otros dos mensajes a RabbitMQ
-├── create_external_user.sh       # Script para crear un usuario externo en RabbitMQ con permisos de administrador
-├── .env                          # Archivo de configuración que contiene las variables de entorno necesarias para el proyecto
-└── README.md                     # Archivo de documentación de este proyecto
-```
-
-## 2. Requisitos
-
-- Docker  
-- Docker Compose  
-- curl
-- Python 3.9 o superior
-
-
-## 3. Instalación
-
-```bash
-git clone https://github.com/DianeyM/Ejercicio1RabbitMQDosWorkers.git
- cd <nombre_del_directorio_clonado>  --> cd RabitMQ10-Python
-docker-compose up --build
-```
-
-## 4. Verificar servicios en ejecución
-
-```bash
-docker ps
-```
-
 ## 5. Probar: 
 Por comodidad y para ver en tiempo real, puedes abrir tres terminales; uno para ejecutar los mensajes, otra para ver los registro de un worker y otro para ver los registros del otro worker. Deja estas tres terminales activas durante las pruebas para que vayas viendo el flujo enviado por el publicador y el flujo recibido por los workers:
 
 ### 5.1 DISTRIBUCIÓN UNIFORME DE TAREAS:
 
 *En la primera consola:
-#### 5.1.1 Enviar trabajos simulados:
-##### A. Enviar trabajos simulados manualmente, uno por uno:
-```
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!1."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!2.."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!3..."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!4...."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!5....."}'
-```
-
-##### B. O dar permisos a `send_five_uniform_messages.sh` y ejecutarlo. Este script está en la raíz del proyecto.
-Solo se deben enviar los trabajos simulados por consola o solo se debe ejecutar el archivo `.sh` correspondiente, no las dos cosas, porque en ese caso, quedarían DUPLICADOS los trabajos. Para dar los permisos y ejecutar el script:
+#### 5.1.1 Dar permisos a `send_five_uniform_messages.sh` y ejecutarlo. Este script está en la raíz del proyecto:
 
 ```
 chmod +x send_five_uniform_messages.sh
@@ -83,6 +28,7 @@ bash send_five_uniform_messages.sh
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
+EVIDENCIA PRUEBAS/5.1 DISTRIBUCIÓN UNIFORME DE TAREAS.png
 
 #### 5.1.3 ℹ️Nota importante: 
 Como se van a hacer una cantidad considerable de pruebas, si en algún momento se acumulan mucha información con los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2`, se pueden limpiar logs antes de cada prueba: 
@@ -386,36 +332,5 @@ El sistema distribuido desarrollado sigue un enfoque de arquitectura basada en c
 5. **Procesamiento de Mensajes (Workers):**
 Cada instancia de worker (por ejemplo, worker1 y worker2) se conecta a RabbitMQ y comienza a consumir mensajes de la cola. El procesamiento es realizado de forma **asíncrona**: una vez recibido un mensaje, el worker ejecuta su lógica (en este caso, impresión/log del contenido recibido), y luego envía un ack al broker para confirmar la finalización correcta.
 
-### 6.2 Mecanismos de Fiabilidad
 
-El sistema incorpora múltiples garantías de fiabilidad a nivel de broker, productor y consumidor:
-
-- **Durabilidad de colas y mensajes:**  
-  - Las colas se declaran como `durable=True`.
-  - Los mensajes se publican con `delivery_mode=pika.DeliveryMode.Persistent`.
-  Esto permite que los mensajes sobrevivan a caídas o reinicios del broker.
-
-- **Confirmación manual (`basic_ack`):**  
-  - Al usar `auto_ack=False`, los consumidores deben confirmar explícitamente que han procesado cada mensaje.
-  - Si un worker falla antes de enviar `basic_ack()`, RabbitMQ detecta la desconexión y reencola automáticamente el mensaje para que otro worker lo procese.
-
-- **Control de flujo (`prefetch_count=1`):**  
-  - Evita que un consumidor reciba múltiples mensajes antes de procesar el actual, lo cual es crucial para mantener la estabilidad del sistema bajo carga y evitar pérdidas por bloqueos.
-
-- **Reconexión resiliente:**  
-  - Tanto el servicio `sender` como los workers utilizan mecanismos de reconexión automática basados en `retry`, lo cual asegura que reanuden su funcionamiento normal una vez que RabbitMQ esté disponible nuevamente, sin intervención manual.
-
-### 6.3 Mecanismos de Distribución del Trabajo
-
-Las pruebas prácticas confirmaron que:
-
-- Los mensajes se distribuyen equitativamente entre múltiples consumidores activos.
-- Al usar `prefetch_count=1`, se logró un procesamiento secuencial por consumidor, permitiendo controlar el rendimiento individual.
-- En pruebas como `send_ten_messages.sh`, se observó una distribución balanceada entre `worker1` y `worker2`.
-- Si un worker se detiene o falla, el otro continúa procesando sin interrupciones.
-- Al agregar nuevos workers, el sistema redistribuye automáticamente la carga, habilitando un **escalado horizontal transparente**.
-
-## 7. Conclusión
-
-Este sistema demuestra un diseño robusto y confiable, con componentes desacoplados que cooperan mediante RabbitMQ para lograr tolerancia a fallos, persistencia de mensajes y procesamiento distribuido. Las configuraciones clave —como `auto_ack=False`, `basic_ack`, `prefetch_count=1`, `durable=True` y `delivery_mode=Persistent`— garantizan integridad y resiliencia. La arquitectura facilita el escalado.
 
