@@ -28,7 +28,7 @@ bash send_five_uniform_messages.sh
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
-![Texto alternativo](EVIDENCIA%20PRUEBAS/5.1%20DISTRIBUCIÓN%20UNIFORME%20DE%20TAREAS.png)
+![Texto alternativo](EvidenciaPruebas/5.1%20DISTRIBUCIÓN%20UNIFORME%20DE%20TAREAS.png)
 
 #### 5.1.3 ℹ️Nota importante: 
 Como se van a hacer una cantidad considerable de pruebas, si en algún momento se acumulan mucha información con los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2`, se pueden limpiar logs antes de cada prueba: 
@@ -109,7 +109,7 @@ Para ver todo el histórico se puede quitar el `--tail 0`:
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
-![No sobrecargar trabajadores](EVIDENCIA_PRUEBAS/5_2_NO_SOBRECARGAR_TRABAJADORES_prefetch_count_1.png)
+![No sobrecargar trabajadores](EvidenciaPruebas/5.2%20NO%20PERMITIR%20SOBRECARGAR%20WORKERS%20OCUPADOS%20EN%20TAREAS%20QUE%20TOMAN%20MÁS%20TIEMPO%20(prefech_count%3D1).png)
 -----------------------------------------------------------------------
 ### 5.3 ANTE LA CAÍDA DE UN WORKER, EL OTRO TOMA SU TRABAJO, EVITANDO QUE LOS TRABAJOS SE PIERDAN (auto_ack=False y back_ack - Confirmación manual de la finalización del trabajo mediante ack))
 
