@@ -143,6 +143,7 @@ docker logs --tail 0 -f rabbit_worker2
 docker kill rabbit_worker2 o
 docker kill rabbit_worker1
 ```
+![Ante la caída de un worker 2](EvidenciaPruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)%202.png)
 
 #### 5.3.4 Iniciar el worker detenido forzosamente: 
 ```
