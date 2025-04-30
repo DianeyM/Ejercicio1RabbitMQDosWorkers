@@ -108,8 +108,12 @@ docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
 
-ℹ️⚠️ Importante: `docker logs -f` no muestra nada inmediatamente después de `truncate`, si no se reinician los workers, debido a que truncar no  reinicia el proceso ni le dice que vuelva a escribir en el log. Si el proceso interno (como tu script Python en `rabbit_worker1`) ya tenía el archivo abierto, puede que aún esté escribiendo en un "descriptor de archivo" apuntando a un archivo que ahora está vacío, pero no ha forzado escritura nueva. Si no ha ocurrido nueva salida (print) desde el truncado, no verás nada hasta que haya algo nuevo que escribir.
+---
+
+>ℹ️⚠️ Importante: `docker logs -f` no muestra nada inmediatamente después de `truncate`, si no se reinician los workers, debido a que truncar no  reinicia el proceso ni le dice que vuelva a escribir en el log. Si el proceso interno (como tu script Python en `rabbit_worker1`) ya tenía el archivo abierto, puede que aún esté escribiendo en un "descriptor de archivo" apuntando a un archivo que ahora está vacío, pero no ha forzado escritura nueva. Si no ha ocurrido nueva salida (print) desde el truncado, no verás nada hasta que haya algo nuevo que escribir.
 Por ello se usa `docker restart rabbit_worker1 rabbit_worker2` para asegurarnos que se muestre `[*] Waiting for messages. To exit press CTRL+C` y siga el proceso sin contratiempos.
+
+---
 
 -----------------------------------------------------------------------
 
