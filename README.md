@@ -91,10 +91,15 @@ Como se van a hacer una cantidad considerable de pruebas, si en algún momento s
 ```
 /var/lib/docker/containers/<container_id>/<container_id>-json.log
 ```
-⚠️ Precauciones: Hazlo solo si estás seguro de que no necesitas revisar esos logs después.Sin embargo, esto no afecta al funcionamiento del contenedor ni a sus volúmenes, colas o estado:
+Esto, mediante:
 ```
 sudo truncate -s 0 $(docker inspect --format='{{.LogPath}}' rabbit_worker1) && sudo truncate -s 0 $(docker inspect --format='{{.LogPath}}' rabbit_worker2)
 ```
+---
+
+> ⚠️ Precauciones: Usa truncate solo si estás seguro de que no necesitas revisar esos logs después.Sin embargo, truncate esto no afecta al funcionamiento del contenedor ni a sus volúmenes, colas o estado:
+
+---
 
 ##### 5.1.3.2 Para que el truncamiento no altere los prints y se muestren inmediatamente, se reinician los dos workers:
 ```
@@ -110,7 +115,7 @@ docker logs -f rabbit_worker2
 
 ---
 
->ℹ️⚠️ Importante: `docker logs -f` no muestra nada inmediatamente después de `truncate`, si no se reinician los workers, debido a que truncar no  reinicia el proceso ni le dice que vuelva a escribir en el log. Si el proceso interno (como tu script Python en `rabbit_worker1`) ya tenía el archivo abierto, puede que aún esté escribiendo en un "descriptor de archivo" apuntando a un archivo que ahora está vacío, pero no ha forzado escritura nueva. Si no ha ocurrido nueva salida (print) desde el truncado, no verás nada hasta que haya algo nuevo que escribir.
+> ℹ️⚠️ Importante: `docker logs -f` no muestra nada inmediatamente después de `truncate`, si no se reinician los workers, debido a que truncar no  reinicia el proceso ni le dice que vuelva a escribir en el log. Si el proceso interno (como tu script Python en `rabbit_worker1`) ya tenía el archivo abierto, puede que aún esté escribiendo en un "descriptor de archivo" apuntando a un archivo que ahora está vacío, pero no ha forzado escritura nueva. Si no ha ocurrido nueva salida (print) desde el truncado, no verás nada hasta que haya algo nuevo que escribir.
 Por ello se usa `docker restart rabbit_worker1 rabbit_worker2` para asegurarnos que se muestre `[*] Waiting for messages. To exit press CTRL+C` y siga el proceso sin contratiempos.
 
 ---
