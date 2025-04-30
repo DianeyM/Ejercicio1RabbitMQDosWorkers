@@ -358,7 +358,7 @@ http://IP_MÁQUINA_VIRTUAL:15672
 
 ---
 
-> ⚠️ **Recomendación**: Se recomienda no permitir acceso externo al usuario guest en producción; limita el uso del dashboard de RabbitMQ en entornos de producción y evita >permitir el acceso externo al usuario `guest`. Minimamente y por ahora se podría por lo menos cambiar el nombre y/o contraseña del usuario por defecto para que no quede >como guest y pasword guest. 
+> ⚠️ **Recomendación**: Se recomienda no permitir acceso externo al usuario guest en producción; limita el uso del dashboard de RabbitMQ en entornos de producción y evita permitir el acceso externo al usuario `guest`. Minimamente y por ahora se podría por lo menos cambiar el nombre y/o contraseña del usuario por defecto para que no quede como guest y pasword guest. 
 
 ---
 
