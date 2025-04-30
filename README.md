@@ -30,7 +30,6 @@ El sistema está compuesto por tres servicios:
 ├── .env                          # Archivo de configuración que contiene las variables de entorno necesarias para el proyecto
 └── README.md                     # Archivo de documentación de este proyecto
 ```
----
 
 ## 2. Requisitos
 
@@ -39,7 +38,6 @@ El sistema está compuesto por tres servicios:
 - curl
 - Python 3.9 o superior
 
----
 
 ## 3. Instalación
 
@@ -49,15 +47,11 @@ cd <proyecto>
 docker-compose up --build
 ```
 
----
-
 ## 4. Verificar servicios en ejecución
 
 ```bash
 docker ps
 ```
-
----
 
 ## 5. Probar: 
 Por comodidad y para ver en tiempo real, puedes abrir tres terminales; uno para ejecutar los mensajes, otra para ver los registro de un worker y otro para ver los registros del otro worker. Deja estas tres terminales activas durante las pruebas para que vayas viendo el flujo enviado por el publicador y el flujo recibido por los workers:
@@ -65,8 +59,8 @@ Por comodidad y para ver en tiempo real, puedes abrir tres terminales; uno para 
 ### 5.1 DISTRIBUCIÓN UNIFORME DE TAREAS:
 
 *En la primera consola:
-#### 5.1.1 
-##### A. Enviar trabajos simulados:
+#### 5.1.1 Enviar trabajos simulados
+##### A. Enviar trabajos simulados manualmente, uno por uno:
 ```
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!1."}'
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!2.."}'
