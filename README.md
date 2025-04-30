@@ -193,10 +193,10 @@ docker start rabbit_worker2 o
 docker start rabbit_worker1
 ```
 Docker detiene y luego inicia el contenedor, y durante ese reinicio:  
-  *Si el worker aún no había hecho ack, la tarea queda pendiente.
-  *RabbitMQ detecta que la conexión del consumidor se cerró sin confirmar el mensaje.
-  *RabbitMQ reentrega esa tarea a otro worker disponible.
-  *Se debe hacer el reinicio antes de que pasen los 40 segundos que le toma al trabajo 17 ejecutarse. Se dejo la ventana de tiempo de 40
+    *Si el worker aún no había hecho ack, la tarea queda pendiente.
+    *RabbitMQ detecta que la conexión del consumidor se cerró sin confirmar el mensaje.
+    *RabbitMQ reentrega esa tarea a otro worker disponible.
+    *Se debe hacer el reinicio antes de que pasen los 40 segundos que le toma al trabajo 17 ejecutarse. Se dejo la ventana de tiempo de 40
     segundos para esta prueba.
 
 En las consolas de los logs:
