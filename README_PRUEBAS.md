@@ -136,6 +136,8 @@ docker logs --tail 0 -f rabbit_worker1
 docker logs --tail 0 -f rabbit_worker2
 ```
 
+![Ante la caída de un worker](EvidenciaPruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)1.png)
+
 #### 5.3.3 Detener forzadamente el worker2 (o el que haya tomado el trabajo 17) antes de que pasen los 40 segundos que le toma al trabajo 17 ejecutarse;  
 ```
 docker kill rabbit_worker2 o
