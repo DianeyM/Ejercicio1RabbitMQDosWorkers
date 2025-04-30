@@ -28,7 +28,7 @@ bash send_five_uniform_messages.sh
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
-(EVIDENCIA%20PRUEBAS/5.1%20DISTRIBUCIÓN%20UNIFORME%20DE%20TAREAS.png)
+!(EVIDENCIA%20PRUEBAS/5.1%20DISTRIBUCIÓN%20UNIFORME%20DE%20TAREAS.png)
 
 #### 5.1.3 ℹ️Nota importante: 
 Como se van a hacer una cantidad considerable de pruebas, si en algún momento se acumulan mucha información con los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2`, se pueden limpiar logs antes de cada prueba: 
