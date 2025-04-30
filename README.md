@@ -59,7 +59,7 @@ Por comodidad y para ver en tiempo real, puedes abrir tres terminales; uno para 
 ### 5.1 DISTRIBUCIÓN UNIFORME DE TAREAS:
 
 *En la primera consola:
-#### 5.1.1 Enviar trabajos simulados
+#### 5.1.1 Enviar trabajos simulados:
 ##### A. Enviar trabajos simulados manualmente, uno por uno:
 ```
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!1."}'
@@ -115,16 +115,18 @@ Por ello se usa `docker restart rabbit_worker1 rabbit_worker2` para asegurarnos 
 
 ### 5.2 NO PERMITIR SOBRECARGAR WORKERS OCUPADOS EN TAREAS QUE TOMAN MÁS TIEMPO (prefetch_count=1)
 
-A cada worker se le puede pasar un nuevo mensaje o tarea solo si confirma que ya terminó el trabajo actual. Si un worker está ocupado, los trabajos se le pasan al otro worker, si este está desocupado, o lo que es lo mismo, no tiene trabajos en desarrollo actual: 
+A cada worker se le puede pasar un nuevo mensaje o tarea solo si confirma que ya terminó el trabajo actual. Si un worker está ocupado, con una tarea actual, los trabajos se le pasan al otro worker, si este está desocupado, o lo que es lo mismo, no tiene trabajos en desarrollo actual: 
 
 En la primera consola:
-### 5.2.1 Dar permisos a `send_ten_messages.sh` y ejecutarlo. Este script está en la raíz del proyecto:
+#### 5.2.1 Enviar trabajos simulados:
+##### A. Dar permisos a `send_ten_messages.sh` y ejecutarlo. Este script está en la raíz del proyecto:
+
 ```
 chmod +x send_ten_messages.sh
 bash send_ten_messages.sh
 ```
 
-O, si no quieres ejecutar el script `chmod +x send_ten_messages.sh`, puedes enviar los trabajos simulados uno por uno:
+##### B. O, si no quieres ejecutar el script `send_ten_messages.sh`, puedes enviar los trabajos simulados uno por uno:
 ```
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!6....."}'
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!7..."}'
@@ -139,12 +141,12 @@ curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '
 ```
 
 En las otras dos consolas:
-### 5.2.2 Ver cómo los trabajos se distribuyen entre los workers conforme estos se desocupan y reciben un nuevo trabajo:
+#### 5.2.2 Ver cómo los trabajos se distribuyen entre los workers conforme estos se desocupan y reciben un nuevo trabajo:
 ```
 docker logs --tail 0 -f rabbit_worker1
 docker logs --tail 0 -f rabbit_worker2
 ```
-`--tail 0` se usa para no imprimir ninguna línea del historial previo de logs del contenedor, solo mostrará lo que venga en tiempo real 
+`--tail 0` se usa para no imprimir ninguna línea del historial previo de logs del contenedor, solo mostrará lo que llegue en tiempo real 
 si lo usas con `-f`.
 
 Para ver todo el histórico se puede quitar el `--tail 0`:
