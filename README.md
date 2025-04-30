@@ -60,12 +60,13 @@ docker ps
 ---
 
 ## 5. Probar: 
-Por comodidad y para ver en tiempo real, puedes abrir tres terminales; uno para ejecutar los mensajes, otra para ver los registro de un worker y otro para ver los registros del otro worker. Deja estas tres terminales activas durante las pruebas para que vayan viendo el flujo enviado por el publicador y el flujo recibido por los workers:
+Por comodidad y para ver en tiempo real, puedes abrir tres terminales; uno para ejecutar los mensajes, otra para ver los registro de un worker y otro para ver los registros del otro worker. Deja estas tres terminales activas durante las pruebas para que vayas viendo el flujo enviado por el publicador y el flujo recibido por los workers:
 
 ### 5.1 DISTRIBUCIÓN UNIFORME DE TAREAS:
 
 *En la primera consola:
-#### 5.1.1 Enviar trabajos simulados:
+#### 5.1.1 
+##### A. Enviar trabajos simulados:
 ```
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!1."}'
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!2.."}'
@@ -74,8 +75,8 @@ curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!5....."}'
 ```
 
-O dar permisos a `send_five_uniform_messages.sh` y ejecutarlo. Este script está en la raíz del proyecto. Solo se deben enviar los trabajos 
-simulados por consola o solo se debe ejecutar el archivo `.sh` correspondiente, no las dos cosas, porque quedarán DUPLICADAS las tareas:
+##### B. O dar permisos a `send_five_uniform_messages.sh` y ejecutarlo. Este script está en la raíz del proyecto.
+Solo se deben enviar los trabajos simulados por consola o solo se debe ejecutar el archivo `.sh` correspondiente, no las dos cosas, porque en ese caso, quedarían DUPLICADOS los trabajos. Para dar los permisos y ejecutar el script:
 
 ```
 chmod +x send_five_uniform_messages.sh
@@ -83,37 +84,37 @@ bash send_five_uniform_messages.sh
 ```
 
 *En las otras dos consolas:
-### 5.1.2 Ver que los mensajes se distribuyeron uniformemente entre los dos workers:
+#### 5.1.2 Ver que los mensajes se distribuyeron uniformemente entre los dos workers:
 ```
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
 
-### 5.1.3 NOTA IMPORTANTE: 
+#### 5.1.3 NOTA IMPORTANTE: 
 Como se van a hacer una cantidad considerable de pruebas, si en algún momento se acumulan mucha información con los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2`, se pueden limpiar logs antes de cada prueba: 
 
-#### 5.1.3.1 Se puede borrar el contenido del archivo: 
+##### 5.1.3.1 Se puede borrar el contenido del archivo: 
 ```
 /var/lib/docker/containers/<container_id>/<container_id>-json.log
 ```
-⚠️ Precauciones: Hazlo solo si estás seguro de que no necesitas revisar esos logs después, sin embargo, esto no afecta al funcionamiento del contenedor ni a sus volúmenes, colas o estado:
+⚠️ Precauciones: Hazlo solo si estás seguro de que no necesitas revisar esos logs después.Sin embargo, esto no afecta al funcionamiento del contenedor ni a sus volúmenes, colas o estado:
 ```
 sudo truncate -s 0 $(docker inspect --format='{{.LogPath}}' rabbit_worker1) && sudo truncate -s 0 $(docker inspect --format='{{.LogPath}}' rabbit_worker2)
 ```
 
-#### 5.1.3.2 Para que el truncamiento no altere los prints y se muestren inmediatamente, se reinician los dos workers:
+##### 5.1.3.2 Para que el truncamiento no altere los prints y se muestren inmediatamente, se reinician los dos workers:
 ```
 docker restart rabbit_worker1 rabbit_worker2
 ```
 Este proceso puede tardar un poco.
 
-#### 5.1.3.3 Luego vuelves a engancharte, una vez los dos workers se hayan reiniciado:
+##### 5.1.3.3 Luego vuelves a engancharte, una vez los dos workers se hayan reiniciado:
 ```
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
 
-Importante: `docker logs -f` no muestra nada inmediatamente después de `truncate`, si no se reinician los workers, debido a que truncar no  reinicia el proceso ni le dice que vuelva a escribir en el log. Si el proceso interno (como tu script Python en `rabbit_worker1`) ya tenía el archivo abierto, puede que aún esté escribiendo en un "descriptor de archivo" apuntando a un archivo que ahora está vacío, pero no ha forzado escritura nueva. Si no ha ocurrido nueva salida (print) desde el truncado, no verás nada hasta que haya algo nuevo que escribir.
+ℹ️⚠️ Importante: `docker logs -f` no muestra nada inmediatamente después de `truncate`, si no se reinician los workers, debido a que truncar no  reinicia el proceso ni le dice que vuelva a escribir en el log. Si el proceso interno (como tu script Python en `rabbit_worker1`) ya tenía el archivo abierto, puede que aún esté escribiendo en un "descriptor de archivo" apuntando a un archivo que ahora está vacío, pero no ha forzado escritura nueva. Si no ha ocurrido nueva salida (print) desde el truncado, no verás nada hasta que haya algo nuevo que escribir.
 Por ello se usa `docker restart rabbit_worker1 rabbit_worker2` para asegurarnos que se muestre `[*] Waiting for messages. To exit press CTRL+C` y siga el proceso sin contratiempos.
 
 -----------------------------------------------------------------------
