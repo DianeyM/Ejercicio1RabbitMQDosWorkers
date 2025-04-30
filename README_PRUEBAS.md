@@ -109,7 +109,7 @@ Para ver todo el histórico se puede quitar el `--tail 0`:
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
-
+![No sobrecargar trabajadores](EVIDENCIA_PRUEBAS/5_2_NO_SOBRECARGAR_TRABAJADORES_prefetch_count_1.png)
 -----------------------------------------------------------------------
 ### 5.3 ANTE LA CAÍDA DE UN WORKER, EL OTRO TOMA SU TRABAJO, EVITANDO QUE LOS TRABAJOS SE PIERDAN (auto_ack=False y back_ack - Confirmación manual de la finalización del trabajo mediante ack))
 
