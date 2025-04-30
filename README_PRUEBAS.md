@@ -145,6 +145,9 @@ Tener en cuenta que cuando uno de los workers se detienen forzosamente, el coman
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
+![Worker toma el trabajo tras caída (caso 4)](EvidenciaPruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)4.png)
+
+
 -----------------------------------------------------------------------
 ### 5.4 SI RABBIT SE CAE O FALLA, LOS MENSAJES NO SE PIERDEN (durable=True y pika.DeliveryMode.Persistent)
 
