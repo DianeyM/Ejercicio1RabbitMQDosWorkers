@@ -84,7 +84,7 @@ docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
 
-#### 5.1.3 NOTA IMPORTANTE: 
+#### 5.1.3 ℹ️Nota importante: 
 Como se van a hacer una cantidad considerable de pruebas, si en algún momento se acumulan mucha información con los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2`, se pueden limpiar logs antes de cada prueba: 
 
 ##### 5.1.3.1 Se puede borrar el contenido del archivo: 
@@ -280,10 +280,11 @@ curl -u guest:guest http://localhost:15672/api/overview | jq
 ```
 http://localhost:15672/api/overview
 
-```
 Ingresando los campos:
 usuario: guest
 contraseña: guest
+```
+
 -----------------------------------------------------------------------
 
 ### 5.7 INGRESAR COMO USUARIO EXTERNO AL PANEL DE CONTROL DE RABBIT:
@@ -307,7 +308,6 @@ docker exec -it rabbitmq9 rabbitmqctl set_permissions -p / dianey ".*" ".*" ".*"
 - Al usar `" .* "` estás diciendo: “dale permiso para todo”.
 - `-p /`: Se refiere al **vhost** donde se aplican los permisos. En este caso, el vhost por defecto `/`.
 
----
 
 ##### 5.7.1.3 Activar acceso a la interfaz web con privilegios administrativos
 
@@ -320,8 +320,6 @@ docker exec -it rabbitmq9 rabbitmqctl set_user_tags dianey administrator
 ```bash
 docker exec -it rabbitmq9 rabbitmqctl list_users
 ```
-
----
 
 #### 5.7.2 O crear y configurar el usuario por medio de script:
 
@@ -337,7 +335,6 @@ En dado caso, si siguió los pasos de numeral 5.7.1 y quiere probar el scrip del
 ```bash
 docker exec -it rabbitmq9 rabbitmqctl delete_user <nombre_usuario>  --> docker exec -it rabbitmq9 rabbitmqctl delete_user dianey
 ```
----
 
 ##### 5.7.2.1 Acceder desde navegador al dashboard de RabbitMQ:
 
