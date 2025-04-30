@@ -59,7 +59,7 @@ docker ps
 
 ---
 
-# 5. Probar: 
+## 5. Probar: 
 Por comodidad y para ver en tiempo real, puedes abrir tres terminales; uno para ejecutar los mensajes, otra para ver los registro de un worker y otro para ver los registros del otro worker. Deja estas tres terminales activas durante las pruebas para que vayan viendo el flujo enviado por el publicador y el flujo recibido por los workers:
 
 # 5.1 DISTRIBUCIÓN UNIFORME DE TAREAS:
