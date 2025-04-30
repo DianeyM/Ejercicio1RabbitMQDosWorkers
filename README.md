@@ -200,9 +200,8 @@ Docker detiene y luego inicia el contenedor, y durante ese reinicio:
     segundos para esta prueba.
 
 En las consolas de los logs:
-#### 5.3.5 Ver que el trabajo 17 lo tomó un worker, pero al matar ese worker, el trabajo lo tomó el otro worker; pero el mensaje no se perdió 
-con la caida del worker que lo tomó inicialmente. Tener en cuenta que cuando uno de los workers se detienen forzosamente, el comando para ver
-los logs se detiene y hay que volver a ejecutarlo:
+#### 5.3.5 Ver que el trabajo 17 lo tomó un worker, pero al matar ese worker, el trabajo lo tomó el otro worker; pero el mensaje no se perdió con la caida del worker que lo tomó inicialmente. 
+Tener en cuenta que cuando uno de los workers se detienen forzosamente, el comando para ver los logs se detiene y hay que volver a ejecutarlo:
 
 ```
 docker logs -f rabbit_worker1
@@ -235,19 +234,24 @@ docker logs -f rabbit_worker2
 ```
 
 En la primera consola:
-### 5.4.3 Inmediatamente detener forzadamente el servicio de RabbitMQ antes que pasen los 40 segundos que necesitan los workers para procesar los trabajos y enviar el ack;  
+#### 5.4.3 Inmediatamente detener forzadamente el servicio de RabbitMQ antes que pasen los 40 segundos que necesitan los workers para procesar los trabajos y enviar el ack;  
 ```
 docker kill rabbitmq9 
 ```
 
-### 5.4.4 Iniciar el worker detenido forzosamente: 
+#### 5.4.4 Iniciar el worker detenido forzosamente: 
 ```
 docker start rabbitmq9
 ```
 
 En las otras dos consolas:
-### 5.4.5 Ver que al inicio cada worker tomó un trabajo, antes de completarse estos trabajos y enviar el ack, RabbitMQ se detuvo y al iniciarse nuevamente, los no se borraron sino que se volvieron a enviar para procesarlos por completo. Tener en cuenta que al caerse el servicio de Rabbit se muestra el mensaje: [!] Error al conectar con RabbitMQ: Stream connection lost: ConnectionResetError(104, 'Connection reset by peer') o [!] Error al conectar con RabbitMQ, se detienen los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2` y hay que volver a ejecutarlos hasta que Rabbit inicie y muestre de nuevo: `[*] Waiting for messages. To exit press CTRL+C`.
+#### *5.4.5 Ver que al inicio cada worker tomó un trabajo, antes de completarse estos trabajos y enviar el ack, RabbitMQ se detuvo y al iniciarse nuevamente, los trabajos no se borraron sino que se volvieron a enviar para procesarlos por completo. 
 
+Tener en cuenta que al caerse el servicio de Rabbit se muestra el mensaje: [!] Error al conectar con RabbitMQ: Stream connection lost: ConnectionResetError(104, 'Connection reset by peer') o [!] Error al conectar con RabbitMQ, se detienen los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2` y hay que volver a ejecutarlos hasta que Rabbit inicie y muestre de nuevo: `[*] Waiting for messages. To exit press CTRL+C`. para que vuleva a estar arriba el sistema y se envieen los trabajos a los consumidores. Y se toma unos minutos en que rabit inice de nuevo y los workers se  onecten a él.
+```
+docker logs -f rabbit_worker1
+docker logs -f rabbit_worker2
+```
 -----------------------------------------------------------------------
 
 ### 5.5 PROBAR QUE NO SE ACEPTAN MENSAJES PARA ENVIAR QUE NO CUMPLAN CON CIERTOS CRITERIOS:
