@@ -42,8 +42,8 @@ El sistema está compuesto por tres servicios:
 ## 3. Instalación
 
 ```bash
-git clone <repositorio>
-cd <proyecto>
+git clone https://github.com/DianeyM/Ejercicio1RabbitMQDosWorkers.git
+cd RabitMQ10-Python
 docker-compose up --build
 ```
 
