@@ -73,26 +73,11 @@ Por ello se usa `docker restart rabbit_worker1 rabbit_worker2` para asegurarnos 
 A cada worker se le puede pasar un nuevo mensaje o tarea solo si confirma que ya terminó el trabajo actual. Si un worker está ocupado, con una tarea actual, los trabajos se le pasan al otro worker, si este está desocupado, o lo que es lo mismo, no tiene trabajos en desarrollo actual: 
 
 En la primera consola:
-#### 5.2.1 Enviar trabajos simulados:
-##### A. Dar permisos a `send_ten_messages.sh` y ejecutarlo. Este script está en la raíz del proyecto:
+#### 5.2.1 Dar permisos a `send_ten_messages.sh` y ejecutarlo. Este script está en la raíz del proyecto:
 
 ```
 chmod +x send_ten_messages.sh
 bash send_ten_messages.sh
-```
-
-##### B. O, si no quieres ejecutar el script `send_ten_messages.sh`, puedes enviar los trabajos simulados uno por uno:
-```
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!6....."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!7..."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!8.."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!9....."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!10.."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!11..."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!12."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!13."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!14..."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!15."}'
 ```
 
 En las otras dos consolas:
@@ -116,17 +101,10 @@ docker logs -f rabbit_worker2
 Simular la caída de un worker que tenía un trabajo en desarrollo antes de que termine el trabajo o antes de que envíe el ack respectivo que indica que terminó de procesar el trabajo, para ver cómo el otro worker toma el trabajo que no pudo completar el primero. De tal manera, que no se pierda el trabajo con la caída de un worker. 
 
 En la primera consola:
-#### 5.3.1 Enviar trabajos simulados:
-##### A. Ejecutar el script `send_two_mesajes.sh`, contenido en la raíz del proyecto:
+#### 5.3.1 Ejecutar el script `send_two_mesajes.sh`, contenido en la raíz del proyecto:
 ```
 chmod +x send_two_mesajes.sh
 bash send_two_mesajes.sh
-```
-
-##### B. O enviar manualmente los trabajos simulados, uno por uno:
-```
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!16.."}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!17........................................"}'
 ```
 
 En las otras dos consolas:
