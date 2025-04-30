@@ -167,7 +167,7 @@ docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
 
-![Mensajes no se pierden si RabbitMQ falla](EvidenciaPruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20(durable%3DTrue%20y%20pika.DeliveryMode.Persistent).png)
+![Mensajes no se pierden si RabbitMQ falla](Evidencia_Pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20(durable%3DTrue%20y%20pika.DeliveryMode.Persistent).png)
 
 
 En la primera consola:
@@ -175,6 +175,9 @@ En la primera consola:
 ```
 docker kill rabbitmq9 
 ```
+
+![Mensajes no se pierden si RabbitMQ falla (caso 2)](Evidencia_Pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20(durable%3DTrue%20y%20pika.DeliveryMode.Persistent)%202.png)
+
 
 #### 5.4.4 Iniciar el worker detenido forzosamente: 
 ```
