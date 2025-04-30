@@ -28,7 +28,7 @@ bash send_five_uniform_messages.sh
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
-![Texto alternativo](Evidencia_Pruebas/5.1%20DISTRIBUCIÓN%20UNIFORME%20DE%20TAREAS.png)
+![Texto alternativo](Evidencia_pruebas/5.1%20DISTRIBUCIÓN%20UNIFORME%20DE%20TAREAS.png)
 
 #### 5.1.3 ℹ️Nota importante: 
 Como se van a hacer una cantidad considerable de pruebas, si en algún momento se acumulan mucha información con los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2`, se pueden limpiar logs antes de cada prueba: 
@@ -94,7 +94,7 @@ Para ver todo el histórico se puede quitar el `--tail 0`:
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
-![No sobrecargar trabajadores](Evidencia_Pruebas/5.2%20NO%20PERMITIR%20SOBRECARGAR%20WORKERS%20OCUPADOS%20EN%20TAREAS%20QUE%20TOMAN%20MÁS%20TIEMPO%20(prefech_count%3D1).png)
+![No sobrecargar trabajadores](Evidencia_pruebas/5.2%20NO%20PERMITIR%20SOBRECARGAR%20WORKERS%20OCUPADOS%20EN%20TAREAS%20QUE%20TOMAN%20MÁS%20TIEMPO%20(prefech_count%3D1).png)
 -----------------------------------------------------------------------
 ### 5.3 ANTE LA CAÍDA DE UN WORKER, EL OTRO TOMA SU TRABAJO, EVITANDO QUE LOS TRABAJOS SE PIERDAN (auto_ack=False y back_ack - Confirmación manual de la finalización del trabajo mediante ack))
 
@@ -114,7 +114,7 @@ docker logs --tail 0 -f rabbit_worker1
 docker logs --tail 0 -f rabbit_worker2
 ```
 
-![Ante la caída de un worker](Evidencia_Pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)1.png)
+![Ante la caída de un worker](Evidencia_pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)1.png)
 
 #### 5.3.3 Detener forzadamente el worker2 (o el que haya tomado el trabajo 17) antes de que pasen los 40 segundos que le toma al trabajo 17 ejecutarse;  
 ```
@@ -122,7 +122,7 @@ docker kill rabbit_worker2 o
 docker kill rabbit_worker1
 ```
 
-![Ante la caída de un worker](Evidencia_Pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)%202.png)
+![Ante la caída de un worker](Evidencia_pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)%202.png)
 
 #### 5.3.4 Iniciar el worker detenido forzosamente: 
 ```
@@ -135,7 +135,7 @@ Docker detiene y luego inicia el contenedor, y durante ese reinicio:
     *RabbitMQ reentrega esa tarea a otro worker disponible.
     *Se debe hacer el reinicio antes de que pasen los 40 segundos que le toma al trabajo 17 ejecutarse. Se dejo la ventana de tiempo de 40 segundos para esta prueba.
 
-![Ante la caída de un worker 3](Evidencia_Pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)3.png)
+![Ante la caída de un worker 3](Evidencia_pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)3.png)
 
 En las consolas de los logs:
 #### 5.3.5 Ver que el trabajo 17 lo tomó un worker, pero al matar ese worker, el trabajo lo tomó el otro worker; pero el mensaje no se perdió con la caida del worker que lo tomó inicialmente. 
@@ -145,7 +145,7 @@ Tener en cuenta que cuando uno de los workers se detienen forzosamente, el coman
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
-![Worker toma el trabajo tras caída (caso 4)](Evidencia_Pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)4.png)
+![Worker toma el trabajo tras caída (caso 4)](Evidencia_pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)4.png)
 
 
 -----------------------------------------------------------------------
@@ -167,7 +167,7 @@ docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
 
-![Mensajes no se pierden si RabbitMQ falla](Evidencia_Pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20(durable%3DTrue%20y%20pika.DeliveryMode.Persistent).png)
+![Mensajes no se pierden si RabbitMQ falla](Evidencia_pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20(durable%3DTrue%20y%20pika.DeliveryMode.Persistent).png)
 
 
 En la primera consola:
@@ -176,7 +176,7 @@ En la primera consola:
 docker kill rabbitmq9 
 ```
 
-![Mensajes no se pierden si RabbitMQ falla (caso 2)](Evidencia_Pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20(durable%3DTrue%20y%20pika.DeliveryMode.Persistent)%202.png)
+![Mensajes no se pierden si RabbitMQ falla (caso 2)](Evidencia_pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20(durable%3DTrue%20y%20pika.DeliveryMode.Persistent)%202.png)
 
 
 #### 5.4.4 Iniciar el worker detenido forzosamente: 
