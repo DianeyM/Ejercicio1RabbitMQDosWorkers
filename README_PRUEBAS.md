@@ -154,17 +154,10 @@ docker logs -f rabbit_worker2
 Antes de seguir puedes aplicar el paso 5.1.2 para truncar los logs.
 
 En la primera consola:
-#### 5.4.1 Enviar trabajos simulados:
-##### A. Ejecutar el script `send_two_mesajes2.sh`, contenido en la raíz del proyecto:
+#### 5.4.1 Ejecutar el script `send_two_mesajes2.sh`, contenido en la raíz del proyecto:
 ```
 chmod +x send_two_mesajes2.sh
 bash send_two_mesajes2.sh
-```
-
-##### B. O enviar manualmente los trabajos simulados, uno por uno:
-```
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!18........................................"}'
-curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!19........................................"}'
 ```
 
 En las otras dos consolas:
@@ -173,6 +166,9 @@ En las otras dos consolas:
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
+
+![Mensajes no se pierden si RabbitMQ falla](EvidenciaPruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20(durable%3DTrue%20y%20pika.DeliveryMode.Persistent).png)
+
 
 En la primera consola:
 #### 5.4.3 Inmediatamente detener forzadamente el servicio de RabbitMQ antes que pasen los 40 segundos que necesitan los workers para procesar los trabajos y enviar el ack;  
