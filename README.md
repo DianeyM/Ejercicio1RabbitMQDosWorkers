@@ -158,60 +158,77 @@ docker logs -f rabbit_worker2
 -----------------------------------------------------------------------
 ### 5.3 ANTE LA CAÍDA DE UN WORKER, EL OTRO TOMA SU TRABAJO, EVITANDO QUE LOS TRABAJOS SE PIERDAN (auto_ack=False y back_ack - Confirmación manual de la finalización del trabajo mediante ack))
 
-Simular la caída de un worker antes de que envíe ack para ver cómo el otro worker toma el trabajo que no pudo completar el primero, sin que el mensaje se pierda al caer el worker.
+Simular la caída de un worker que tenía un trabajo en desarrollo antes de que termine el trabajo o antes de que envíe el ack respectivo que indica que terminó de procesar el trabajo, para ver cómo el otro worker toma el trabajo que no pudo completar el primero. De tal manera, que no se pierda el trabajo con la caida de un worker. 
 
 En la primera consola:
-### 5.3.1 Ejecutar el script `send_two_mesajes.sh`, contenido en la raíz del proyecto:
+#### 5.3.1 Enviar trabajos simulados:
+##### A. Ejecutar el script `send_two_mesajes.sh`, contenido en la raíz del proyecto:
 ```
 chmod +x send_two_mesajes.sh
 bash send_two_mesajes.sh
 ```
 
-O enviar manualmente los trabajos simulados:
+##### B. O enviar manualmente los trabajos simulados, uno por uno:
 ```
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!16.."}'
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!17........................................"}'
 ```
 
 En las otras dos consolas:
-### 5.3.2 Ver los logs de los workers para determinar qué worker tomó el trabajo 17:
+#### 5.3.2 Ver los logs de los workers para determinar qué worker tomó el trabajo 17:
 ```
 docker logs --tail 0 -f rabbit_worker1
 docker logs --tail 0 -f rabbit_worker2
 ```
 
-### 5.3.3 Detener forzadamente el worker2 (o el que haya tomado el trabajo 17) antes de que pasen los 40 segundos que le toma al trabajo 17 ejecutarse;  
+#### 5.3.3 Detener forzadamente el worker2 (o el que haya tomado el trabajo 17) antes de que pasen los 40 segundos que le toma al trabajo 17 ejecutarse;  
 ```
 docker kill rabbit_worker2 o
 docker kill rabbit_worker1
 ```
 
-### 5.3.4 Iniciar el worker detenido forzosamente: 
+#### 5.3.4 Iniciar el worker detenido forzosamente: 
 ```
 docker start rabbit_worker2 o
 docker start rabbit_worker1
 ```
+Docker detiene y luego inicia el contenedor, y durante ese reinicio:
+  *Si el worker aún no había hecho ack, la tarea queda pendiente.
+  *RabbitMQ detecta que la conexión del consumidor se cerró sin confirmar el mensaje.
+  *RabbitMQ reentrega esa tarea a otro worker disponible.
+  *Se debe hacer el reinicio antes de que pasen los 40 segundos que le toma al trabajo 17 ejecutarse. Se dejo la ventana de tiempo de 40
+    segundos para esta prueba.
 
+En las consolas de los logs:
+#### 5.3.5 Ver que el trabajo 17 lo tomó un worker, pero al matar ese worker, el trabajo lo tomó el otro worker; pero el mensaje no se perdió 
+con la caida del worker que lo tomó inicialmente. Tener en cuenta que cuando uno de los workers se detienen forzosamente, el comando para ver
+los logs se detiene y hay que volver a ejecutarlo:
+
+```
+docker logs -f rabbit_worker1
+docker logs -f rabbit_worker2
+```
 -----------------------------------------------------------------------
 ### 5.4 SI RABBIT SE CAE O FALLA, LOS MENSAJES NO SE PIERDEN (durable=True y pika.DeliveryMode.Persistent)
 
 Antes de seguir puedes aplicar el paso 5.1.2 para truncar los logs.
 
 En la primera consola:
-### 5.4.1 Ejecutar el script `send_two_mesajes2.sh`, contenido en la raíz del proyecto:
+#### 5.4.1 Enviar trabajos simulados:
+##### A. Ejecutar el script `send_two_mesajes2.sh`, contenido en la raíz del proyecto:
 ```
 chmod +x send_two_mesajes2.sh
 bash send_two_mesajes2.sh
 ```
 
-O enviar manualmente los trabajos simulados:
+##### B. O enviar manualmente los trabajos simulados, uno por uno:
 ```
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!18........................................"}'
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!19........................................"}'
 ```
 
 En las otras dos consolas:
-### 5.4.2 Ver los logs de los workers:
+#### 5.4.2 Ver los logs de los workers:
 ```
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
