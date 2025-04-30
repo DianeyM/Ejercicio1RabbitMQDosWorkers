@@ -143,8 +143,8 @@ docker logs --tail 0 -f rabbit_worker2
 docker kill rabbit_worker2 o
 docker kill rabbit_worker1
 ```
-![Ante la caída de un worker 3](EvidenciaPruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN3.png)
 
+![Ante la caída de un worker](EvidenciaPruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)%202.png)
 
 #### 5.3.4 Iniciar el worker detenido forzosamente: 
 ```
@@ -157,7 +157,7 @@ Docker detiene y luego inicia el contenedor, y durante ese reinicio:
     *RabbitMQ reentrega esa tarea a otro worker disponible.
     *Se debe hacer el reinicio antes de que pasen los 40 segundos que le toma al trabajo 17 ejecutarse. Se dejo la ventana de tiempo de 40 segundos para esta prueba.
 
-![caída de un worker 3] EvidenciaPruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)%203.png)
+![Ante la caída de un worker 3](EvidenciaPruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN3.png)
 
 En las consolas de los logs:
 #### 5.3.5 Ver que el trabajo 17 lo tomó un worker, pero al matar ese worker, el trabajo lo tomó el otro worker; pero el mensaje no se perdió con la caida del worker que lo tomó inicialmente. 
