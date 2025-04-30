@@ -245,9 +245,9 @@ docker start rabbitmq9
 ```
 
 En las otras dos consolas:
-#### *5.4.5 Ver que al inicio cada worker tomó un trabajo, antes de completarse estos trabajos y enviar el ack, RabbitMQ se detuvo y al iniciarse nuevamente, los trabajos no se borraron sino que se volvieron a enviar para procesarlos por completo. 
+#### 5.4.5 Ver que al inicio cada worker tomó un trabajo, antes de completarse estos trabajos y enviar el ack, RabbitMQ se detuvo y al iniciarse nuevamente, los trabajos no se borraron sino que se volvieron a enviar para procesarlos por completo. 
 
-Tener en cuenta que al caerse el servicio de Rabbit se muestra el mensaje: [!] Error al conectar con RabbitMQ: Stream connection lost: ConnectionResetError(104, 'Connection reset by peer') o [!] Error al conectar con RabbitMQ, se detienen los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2` y hay que volver a ejecutarlos hasta que Rabbit inicie y muestre de nuevo: `[*] Waiting for messages. To exit press CTRL+C`. para que vuleva a estar arriba el sistema y se envieen los trabajos a los consumidores. Y se toma unos minutos en que rabit inice de nuevo y los workers se  onecten a él.
+Tener en cuenta que al caerse el servicio de Rabbit se muestra el mensaje: 🚨[!] Error al conectar con RabbitMQ: Stream connection lost: ConnectionResetError(104, 'Connection reset by peer') o 🚨[!] Error al conectar con RabbitMQ, se detienen los comandos `docker logs -f rabbit_worker1` y `docker logs -f rabbit_worker2` y hay que volver a ejecutarlos hasta que Rabbit inicie y muestre de nuevo: `[*] Waiting for messages. To exit press CTRL+C`. para que vuleva a estar arriba el sistema y se envieen los trabajos a los consumidores. Y se toma unos minutos en que rabit inice de nuevo y los workers se  onecten a él.
 ```
 docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
@@ -255,13 +255,14 @@ docker logs -f rabbit_worker2
 -----------------------------------------------------------------------
 
 ### 5.5 PROBAR QUE NO SE ACEPTAN MENSAJES PARA ENVIAR QUE NO CUMPLAN CON CIERTOS CRITERIOS:
-En la primera consola:
-### 5.5.1 Si el mensaje tiene más de 5 puntos, o no tiene exactamente 30 o 40 puntos, muestra el error respectivo. Probando con 10 puntos:
+
+#### 5.5.1 Si el mensaje tiene más de 5 puntos, o no tiene exactamente 30 o 40 puntos, muestra el error respectivo. 
+Probando con 10 puntos (En la primera consola):
 ```
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "Hello RabbitMQ!.........."}'
 ```
 
-### 5.5.2 Si la petición no tiene mensaje o el mensaje está vacío, muestra el error respectivo:
+#### 5.5.2 Si la petición no tiene mensaje o el mensaje está vacío, muestra el error respectivo:
 En la primera consola:
 ```
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '{"message": "   "}'
@@ -271,28 +272,29 @@ curl -X POST http://localhost:5044/send -H "Content-Type: application/json"
 -----------------------------------------------------------------------
 
 ### 5.6 INGRESAR COMO USUARIO GUEST AL PANEL DE CONTROL DE RABBITMQ DESDE EL HOST O MÁQUINA VIRTUAL:
-En la primera consola:
+#### A. En la primera consola:
 ```
 curl -u guest:guest http://localhost:15672/api/overview | jq
 ```
-Desde el navegador:
+#### A.Desde el navegador:
 ```
 http://localhost:15672/api/overview
+
+```
+Ingresando los campos:
 usuario: guest
 contraseña: guest
-```
-
 -----------------------------------------------------------------------
 
 ### 5.7 INGRESAR COMO USUARIO EXTERNO AL PANEL DE CONTROL DE RABBIT:
 En la primera consola: 
-### 5.7.1 Crear un nuevo usuario con permisos adecuados en el contenedor:
+#### 5.7.1 Crear y configurar usuario manualmente:
+##### 5.7.1.1 Crear un nuevo usuario con permisos adecuados en el contenedor:
 ```
 docker exec -it rabbitmq9 rabbitmqctl add_user dianey 'dianey94*'
 ```
 
-
-## 5.7.2 Darle permisos al usuario
+##### 5.7.1.2 Darle permisos al usuario
 
 ```bash
 docker exec -it rabbitmq9 rabbitmqctl set_permissions -p / dianey ".*" ".*" ".*"
@@ -307,13 +309,13 @@ docker exec -it rabbitmq9 rabbitmqctl set_permissions -p / dianey ".*" ".*" ".*"
 
 ---
 
-## 5.7.3 Activar acceso a la interfaz web con privilegios administrativos
+##### 5.7.1.3 Activar acceso a la interfaz web con privilegios administrativos
 
 ```bash
 docker exec -it rabbitmq9 rabbitmqctl set_user_tags dianey administrator
 ```
 
-Verificamos que el usuario fue creado y tiene los permisos administrativos:
+##### 5.7.1.4 Verificamos que el usuario fue creado y tiene los permisos administrativos:
 
 ```bash
 docker exec -it rabbitmq9 rabbitmqctl list_users
@@ -321,18 +323,23 @@ docker exec -it rabbitmq9 rabbitmqctl list_users
 
 ---
 
-## 5.7.4 Automatización con script
+#### 5.7.2 O crear y configurar el usuario por medio de script:
 
-Para realizar automáticamente lo anterior puedes ejecutar el script `create_external_user.sh`, contenido en la raíz del proyecto:
+##### 5.7.2.1 Para realizar automáticamente los pasos del numeral 5.7.1 puedes ejecutar el script `create_external_user.sh`, contenido en la raíz del proyecto:
 
 ```bash
 chmod +x create_external_user.sh
 bash create_external_user.sh
 ```
+⚠️ Tenga en cuenta que solo puede seguir el paso 5.7.1 o 5.7.2, no los dos, porque al ejecutar el script  create_external_user.sh se indicará que el usuario ya existe.
+En dado caso, si siguió los pasos de numeral 5.7.1 y quiere probar el scrip del numeral 5.7.2, deberá eliminar el usuario creado: 
 
+```bash
+docker exec -it rabbitmq9 rabbitmqctl delete_user <nombre_usuario>  --> docker exec -it rabbitmq9 rabbitmqctl delete_user dianey
+```
 ---
 
-## 5.7.5 Acceder desde navegador
+##### 5.7.2.1 Acceder desde navegador al dashboard de RabbitMQ:
 
 Puedes acceder desde el navegador de la máquina física con el usuario `dianey` y la contraseña `dianey94*`:
 
@@ -342,10 +349,7 @@ http://IP_MÁQUINA_VIRTUAL:15672
 
 ---
 
-> ⚠️ **Recomendación**: Limita el uso del dashboard de RabbitMQ en entornos de producción y evita permitir el acceso externo al usuario `guest`.
-
-
-⚠️ Nota: se recomienda no permitir acceso externo al usuario guest en producción.
+> ⚠️ **Recomendación**: Se recomienda no permitir acceso externo al usuario guest en producción; limita el uso del dashboard de RabbitMQ en entornos de producción y evita permitir el acceso externo al usuario `guest`. Minimamente y por ahora se podría por lo menos cambiar el nombre y/o contraseña del usuario por defecto para que no quede como guest y pasword guest. 
 
 ---
 
