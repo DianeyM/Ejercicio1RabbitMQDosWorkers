@@ -212,6 +212,8 @@ curl -X POST http://localhost:5044/send -H "Content-Type: application/json" -d '
 curl -X POST http://localhost:5044/send -H "Content-Type: application/json"
 ```
 
+![5.5 - Validación de mensajes antes de enviar](Evidencia_pruebas/5.5%20PROBAR%20QUE%20NO%20SE%20ACEPTAN%20MENSAJES%20PARA%20ENVIAR%20QUE%20NO%20CUMPLAN%20CON%20CIERTOS%20CRITERIOS.png)
+
 -----------------------------------------------------------------------
 
 ### 5.6 INGRESAR COMO USUARIO GUEST AL PANEL DE CONTROL DE RABBITMQ DESDE EL HOST O MÁQUINA VIRTUAL:
@@ -227,6 +229,8 @@ Ingresando los campos:
 usuario: guest
 contraseña: guest
 ```
+
+![5.6 - Acceso guest al panel RabbitMQ](Evidencia_pruebas/5.6%20INGRESAR%20COMO%20USUARIO%20GUEST%20AL%20PANEL%20DE%20CONTROL%20DE%20RABBITMQ%20DESDE%20EL%20HOST%20O%20M%C3%81QUINA%20VIRTUAL.png)
 
 -----------------------------------------------------------------------
 
@@ -273,6 +277,8 @@ chmod +x create_external_user.sh
 bash create_external_user.sh
 ```
 
+![5.7 - Acceso externo al panel de RabbitMQ](Evidencia_pruebas/5.7%20INGRESAR%20COMO%20USUARIO%20EXTERNO%20AL%20PANEL%20DE%20CONTROL%20DE%20RABBIT.png)
+
 ---
 
 >⚠️ Tenga en cuenta que solo puede seguir el paso 5.7.1 o 5.7.2, no los dos, porque al ejecutar el script  create_external_user.sh se indicará que el usuario ya existe.
@@ -289,6 +295,9 @@ Puedes acceder desde el navegador de la máquina física con el usuario `dianey`
 ```
 http://IP_MÁQUINA_VIRTUAL:15672
 ```
+![5.7 - Acceso externo al panel de RabbitMQ (Parte 2)](Evidencia_pruebas/5.7%20INGRESAR%20COMO%20USUARIO%20EXTERNO%20AL%20PANEL%20DE%20CONTROL%20DE%20RABBIT%202.png)
+
+![5.7 - Acceso externo al panel de RabbitMQ (Parte 3)](Evidencia_pruebas/5.7%20INGRESAR%20COMO%20USUARIO%20EXTERNO%20AL%20PANEL%20DE%20CONTROL%20DE%20RABBIT%203.png)
 
 ---
 
