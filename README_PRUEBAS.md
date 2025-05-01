@@ -122,7 +122,7 @@ docker kill rabbit_worker2 o
 docker kill rabbit_worker1
 ```
 
-![Ante la caída de un worker](Evidencia_pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)%202.png)
+![Ante la caída de un worker 2](Evidencia_pruebas/5.3%20ANTE%20LA%20CAIDA%20DE%20UN%20WORKER%2C%20EL%20OTRO%20TOMA%20SU%20TRABAJO%2C%20EVITANDO%20QUE%20LOS%20TRABAJOS%20SE%20PIERDAN%20(auto_ack%3DFalse%20y%20back_ack)%202.png)
 
 #### 5.3.4 Iniciar el worker detenido forzosamente: 
 ```
@@ -193,7 +193,7 @@ docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
 
-![5.4 - RabbitMQ falla y los mensajes no se pierden (parte 3)](Evidencia_pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20%28durable%3DTrue%20y%20pika.DeliveryMode.Persistent%29%203.png)
+![5.4 - RabbitMQ cae y no se pierden mensajes (Parte 3)](Evidencia_pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20%28durable%3DTrue%20y%20pika.DeliveryMode.Persistent%29%203.png)
 
 -----------------------------------------------------------------------
 
