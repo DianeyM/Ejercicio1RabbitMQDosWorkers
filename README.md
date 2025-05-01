@@ -12,7 +12,7 @@ El sistema está compuesto por tres servicios:
 ##  1. Estructura del Proyecto
 
 ```plaintext
-.
+RabitMQ10-Python
 ├── api/                          # Carpeta que contiene el código y configuración de la API
 │   ├── api.py                    # Archivo Python que implementa la API Flask para enviar mensajes a RabbitMQ
 │   ├── Dockerfile                # Dockerfile para construir el contenedor de la API
@@ -43,7 +43,7 @@ El sistema está compuesto por tres servicios:
 
 ```bash
 git clone https://github.com/DianeyM/Ejercicio1RabbitMQDosWorkers.git
- cd <nombre_del_directorio_clonado>  --> cd RabitMQ10-Python
+cd <nombre_del_directorio_clonado>  --> cd Ejercicio1RabbitMQDosWorkers.git
 docker-compose up --build
 ```
 
