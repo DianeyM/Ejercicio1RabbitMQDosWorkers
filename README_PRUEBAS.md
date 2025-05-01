@@ -193,7 +193,7 @@ docker logs -f rabbit_worker1
 docker logs -f rabbit_worker2
 ```
 
-![5.4 - RabbitMQ cae y no se pierden mensajes (Parte 3)](Evidencia_pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20(durable%3DTrue%20y%20pika.DeliveryMode.Persistent)%203.png)
+![5.4 - RabbitMQ cae y no se pierden mensajes (Parte 3)](Evidencia_pruebas/5.4%20SI%20RABBIT%20SE%20CAE%20O%20FALLA%2C%20LOS%20MENSAJES%20NO%20SE%20PIERDEN%20%28durable%3DTrue%20y%20pika.DeliveryMode.Persistent%29%203.png)
 
 -----------------------------------------------------------------------
 
